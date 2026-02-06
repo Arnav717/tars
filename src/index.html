@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TARS - Your Always-On AI Companion</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>TARS</h1>
+            <p class="subtitle">Your Always-On AI Companion</p>
+        </header>
+        
+        <main>
+            <div class="chat-container">
+                <div id="messages" class="messages"></div>
+                
+                <div class="input-container">
+                    <textarea 
+                        id="input" 
+                        placeholder="Ask anything... (Press Esc to close)"
+                        rows="2"
+                    ></textarea>
+                    <button id="send-btn">Send</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script type="module" src="./main.js"></script>
+</body>
+</html>

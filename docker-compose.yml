@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Development environment for TARS
+  tars-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tars-dev
+    volumes:
+      # Mount source code for hot-reload
+      - ./src:/app/src
+      - ./src-tauri:/app/src-tauri
+      - ./public:/app/public
+      # Cache dependencies to improve rebuild speed
+      - node_modules:/app/node_modules
+      - cargo-cache:/root/.cargo
+      - target-cache:/app/src-tauri/target
+    ports:
+      - "1420:1420"  # Vite dev server
+      - "9222:9222"  # Chrome DevTools (if needed)
+    environment:
+      - NODE_ENV=development
+      - RUST_LOG=info
+      - RUST_BACKTRACE=1
+    # Keep container running
+    stdin_open: true
+    tty: true
+    networks:
+      - tars-network
+
+  # Optional: Documentation server (for viewing docs locally)
+  docs:
+    image: nginx:alpine
+    container_name: tars-docs
+    volumes:
+      - ./docs:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    networks:
+      - tars-network
+
+volumes:
+  node_modules:
+  cargo-cache:
+  target-cache:
+
+networks:
+  tars-network:
+    driver: bridge
