@@ -1,0 +1,168 @@
+<mxfile host="app.diagrams.net" modified="2026-03-26T00:00:00.000Z" agent="5.0" version="24.0.0">
+  <diagram name="TARS Architecture - Layered MVC" id="tars-design-arch">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="🤖 TARS — Layered Architecture (Linux Desktop)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="300" y="15" width="800" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="subtitle" value="Tauri v2 + React + Rust | MVC-Inspired Layered Design" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="400" y="50" width="600" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- ========== PRESENTATION LAYER (View) ========== -->
+        <mxCell id="presentation-layer" value="&lt;b&gt;PRESENTATION LAYER (View)&lt;/b&gt;  —  React + TailwindCSS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#3F51B5;verticalAlign=top;fontSize=13;fontColor=#1A237E;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="1280" height="160" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="comp-app" value="&lt;b&gt;App.tsx&lt;/b&gt;&#xa;Main Component&#xa;State Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C5CAE9;strokeColor=#3F51B5;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="90" y="125" width="140" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="comp-model" value="&lt;b&gt;ModelSelector&lt;/b&gt;&#xa;AI Model Picker&#xa;Free/Premium" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C5CAE9;strokeColor=#3F51B5;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="260" y="125" width="140" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="comp-response" value="&lt;b&gt;ResponseSection&lt;/b&gt;&#xa;+ MarkdownRenderer&#xa;Syntax Highlighting" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C5CAE9;strokeColor=#3F51B5;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="430" y="125" width="160" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="comp-store" value="&lt;b&gt;StoreToDB&lt;/b&gt;&#xa;Conversation&#xa;Persistence Toggle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C5CAE9;strokeColor=#3F51B5;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="620" y="125" width="140" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="comp-css" value="&lt;b&gt;App.css&lt;/b&gt;&#xa;TailwindCSS v4&#xa;Dark Theme&#xa;Anti-Ghosting" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C5CAE9;strokeColor=#3F51B5;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="790" y="125" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="comp-hotkey" value="&lt;b&gt;Global Shortcuts&lt;/b&gt;&#xa;Ctrl+Shift+U/Y/V&#xa;Esc to dismiss" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C5CAE9;strokeColor=#3F51B5;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="960" y="125" width="150" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="comp-clipboard" value="&lt;b&gt;Clipboard&lt;/b&gt;&#xa;Context Capture&#xa;Auto-populate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C5CAE9;strokeColor=#3F51B5;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="125" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ========== APPLICATION LAYER (Controller) ========== -->
+        <mxCell id="app-layer" value="&lt;b&gt;APPLICATION LAYER (Controller)&lt;/b&gt;  —  TypeScript Actions + Utilities" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;verticalAlign=top;fontSize=13;fontColor=#BF360C;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="280" width="1280" height="140" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="action-llm" value="&lt;b&gt;actions/llm.tsx&lt;/b&gt;&#xa;Message Routing&#xa;History Assembly" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="90" y="315" width="180" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="util-conv" value="&lt;b&gt;conversationManager.ts&lt;/b&gt;&#xa;localStorage History&#xa;Gemini Format" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="310" y="315" width="190" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="util-prompts" value="&lt;b&gt;prompts.ts&lt;/b&gt;&#xa;System Instructions&#xa;Context Injection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="540" y="315" width="170" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="util-userid" value="&lt;b&gt;userIdentifier.ts&lt;/b&gt;&#xa;Unique User ID&#xa;localStorage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="750" y="315" width="170" height="85" as="geometry" />
+        </mxCell>
+
+        <mxCell id="util-cn" value="&lt;b&gt;lib/utils.ts&lt;/b&gt;&#xa;cn() helper&#xa;Class merging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="960" y="315" width="150" height="85" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== IPC BRIDGE ========== -->
+        <mxCell id="ipc-bridge" value="🔗 Tauri IPC Bridge  (invoke / commands)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#9C27B0;fontSize=13;fontStyle=1;fontColor=#6A1B9A;" vertex="1" parent="1">
+          <mxGeometry x="200" y="445" width="1000" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- ========== BACKEND LAYER (Model) ========== -->
+        <mxCell id="backend-layer" value="&lt;b&gt;BACKEND LAYER (Model)&lt;/b&gt;  —  Rust + Tauri v2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;verticalAlign=top;fontSize=13;fontColor=#1B5E20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="500" width="1280" height="140" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cmd-gemini" value="&lt;b&gt;send_message_to_gemini&lt;/b&gt;&#xa;Gemini API Client&#xa;JSON Request/Response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="90" y="535" width="200" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cmd-toggle" value="&lt;b&gt;toggle_window&lt;/b&gt;&#xa;Show/Hide/Focus&#xa;Window Manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="330" y="535" width="170" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cmd-screenshot" value="&lt;b&gt;take_screenshot&lt;/b&gt;&#xa;xcap (Linux)&#xa;PNG Encoding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="540" y="535" width="170" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cmd-ss-gemini" value="&lt;b&gt;send_screenshot_to_gemini&lt;/b&gt;&#xa;Capture + Base64&#xa;+ Gemini Vision" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="750" y="535" width="200" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cmd-store" value="&lt;b&gt;store_conversation&lt;/b&gt;&#xa;AWS DynamoDB&#xa;UUID Generation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="990" y="535" width="180" height="85" as="geometry" />
+        </mxCell>
+        
+        <!-- ========== EXTERNAL SERVICES ========== -->
+        <mxCell id="ext-layer" value="&lt;b&gt;EXTERNAL SERVICES&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;verticalAlign=top;fontSize=13;fontColor=#880E4F;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="670" width="1280" height="110" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ext-gemini" value="☁️ &lt;b&gt;Google Gemini API&lt;/b&gt;&#xa;gemini-2.5-flash" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="120" y="705" width="180" height="55" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ext-dynamo" value="🗄️ &lt;b&gt;AWS DynamoDB&lt;/b&gt;&#xa;Conversation Storage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="380" y="705" width="180" height="55" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ext-storage" value="💾 &lt;b&gt;localStorage&lt;/b&gt;&#xa;History + User ID" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="640" y="705" width="160" height="55" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ext-os" value="🖥️ &lt;b&gt;Linux OS&lt;/b&gt;&#xa;X11/Wayland, Clipboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="880" y="705" width="180" height="55" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ext-docker" value="🐳 &lt;b&gt;Docker&lt;/b&gt;&#xa;Dev Environment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="705" width="140" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ========== ARROWS ========== -->
+        
+        <!-- Presentation → Application -->
+        <mxCell id="arr1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=3;strokeColor=#3F51B5;endArrow=block;endFill=1;" edge="1" parent="1" source="comp-app" target="action-llm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Application → IPC -->
+        <mxCell id="arr2" value="invoke()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=3;strokeColor=#E65100;endArrow=block;endFill=1;fontSize=11;fontStyle=1;" edge="1" parent="1" source="action-llm" target="ipc-bridge">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- IPC → Backend -->
+        <mxCell id="arr3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=3;strokeColor=#9C27B0;endArrow=block;endFill=1;" edge="1" parent="1" source="ipc-bridge" target="cmd-gemini">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Backend → External -->
+        <mxCell id="arr4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#2E7D32;endArrow=block;endFill=1;" edge="1" parent="1" source="cmd-gemini" target="ext-gemini">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arr5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#2E7D32;endArrow=block;endFill=1;" edge="1" parent="1" source="cmd-store" target="ext-dynamo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arr6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;strokeColor=#2E7D32;endArrow=block;endFill=1;" edge="1" parent="1" source="cmd-screenshot" target="ext-os">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-box" value="&lt;b&gt;DESIGN STYLE&lt;/b&gt;&#xa;Layered + MVC-Inspired" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#424242;verticalAlign=top;fontSize=11;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="90" width="180" height="60" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

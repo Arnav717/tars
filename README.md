@@ -47,14 +47,35 @@ To create an AI companion that feels like a natural extension of the operating s
 
 ---
 
+## 🎨 Software Design
+
+TARS follows a **Layered Architecture** with an **MVC-inspired** separation of concerns across 5 distinct layers: Presentation (React), Application (TypeScript), IPC Bridge (Tauri), Backend (Rust), and External Services. This architecture maximizes modularity and ensures low coupling between the UI, business logic, and system-level operations.
+
+![Architecture Diagram](docs/design/architecture_diagram.png)
+
+**Key Design Principles:**
+- **Abstraction** — Tauri IPC hides Rust complexity from React; `ConversationManager` abstracts storage
+- **Modularity** — Self-contained components (ModelSelector, StoreToDB, ResponseSection)
+- **High Cohesion** — Each file has one responsibility (e.g., `clipboard.tsx` only reads clipboard)
+- **Low Coupling** — Frontend ↔ Backend communicate only via JSON over IPC; zero shared code
+
+📄 **[Full Software Design Document →](docs/design/SOFTWARE_DESIGN_DOCUMENT.md)**
+📐 **[Draw.io Architecture Source →](docs/design/TARS_Design_Architecture.drawio)**
+
+---
+
 ## 🛠️ Tech Stack
 
 | Component | Technology |
 |-----------|------------|
-| Framework | [Tauri](https://tauri.app/) |
-| Backend   | Rust |
-| Frontend  | HTML, CSS, JavaScript |
-| AI Integration | LLM API (OpenAI/Claude) |
+| Framework | [Tauri v2](https://tauri.app/) |
+| Backend   | Rust (2021 edition) |
+| Frontend  | React 18, TypeScript, TailwindCSS v4 |
+| AI Integration | Google Gemini API (2.5 Flash) |
+| Screenshot | xcap (Linux-compatible) |
+| Storage   | localStorage + AWS DynamoDB (optional) |
+| Build Tool | Vite v6 |
+| Container | Docker + Docker Compose |
 
 ## 📐 SDLC Model
 
