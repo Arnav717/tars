@@ -233,10 +233,14 @@ function App() {
             e.preventDefault();
             setQuestion(inputValue);
 
-            if (
-                inputValue.trim().toLowerCase().startsWith("analyze:") ||
-                inputValue.trim().toLowerCase().startsWith("screenshot:")
-            ) {
+            const lowerInput = inputValue.trim().toLowerCase();
+            const needsScreenshot =
+                lowerInput.startsWith("analyze:") ||
+                lowerInput.startsWith("screenshot:") ||
+                lowerInput.includes("screen") ||
+                lowerInput.includes("see");
+
+            if (needsScreenshot) {
                 const prompt = inputValue
                     .trim()
                     .replace(/^(analyze:|screenshot:)\s*/i, "");
@@ -297,6 +301,9 @@ function App() {
                     e.preventDefault();
                     handleCopyResponse();
                 }
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                handleToggle();
             }
         };
         window.addEventListener("keydown", onKeyDown);
@@ -333,13 +340,16 @@ function App() {
             {/* Top Control Bar */}
             <div
                 style={{
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    backdropFilter: "blur(24px)",
+                    WebkitBackdropFilter: "blur(24px)",
                     borderRadius: "16px",
                     padding: "8px 16px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    border: "none",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
                 }}
             >
                 {/* Left side - TARS branding */}
@@ -449,15 +459,16 @@ function App() {
             <div
                 key={`main-content-${forceRefresh}`}
                 style={{
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    backdropFilter: "blur(24px)",
+                    WebkitBackdropFilter: "blur(24px)",
                     borderRadius: "24px",
                     padding: "20px",
-                    border: "none",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
                     flex: 1,
                     display: "flex",
                     flexDirection: "column",
-                    minHeight: "500px",
-                    maxHeight: "70vh",
                     overflow: "hidden",
                     transform: "translate3d(0, 0, 0)",
                     backfaceVisibility: "hidden",

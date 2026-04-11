@@ -65,7 +65,7 @@ async fn send_message_to_gemini(messages: Vec<Message>) -> Result<String, String
     };
     
     let url = format!(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent?key={}",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={}",
         api_key
     );
     
@@ -178,7 +178,7 @@ async fn send_screenshot_to_gemini(prompt: String) -> Result<String, String> {
     
     let client = reqwest::Client::new();
     let url = format!(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent?key={}",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={}",
         api_key
     );
     
@@ -263,6 +263,13 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            if let Some(window) = tauri::Manager::get_webview_window(app, "main") {
+                let _ = window.unminimize();
+                let _ = window.show();
+                let _ = window.set_focus();
+            }
+        }))
         .invoke_handler(tauri::generate_handler![
             toggle_window, 
             send_message_to_gemini,
@@ -276,4 +283,36 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_message_serialization() {
+        let msg = Message {
+            role: "user".to_string(),
+            parts: vec![MessagePart {
+                text: Some("hello world".to_string()),
+                inline_data: None,
+            }],
+        };
+        let json = serde_json::to_string(&msg).expect("Failed to serialize");
+        assert_eq!(json, r#"{"role":"user","parts":[{"text":"hello world","inline_data":null}]}"#);
+    }
+
+    #[test]
+    fn test_conversation_data_deserialization() {
+        let json = r#"{
+            "question": "What is AI?",
+            "response": "AI is Artificial Intelligence.",
+            "context": "Context snippet",
+            "timestamp": "2026-04-12T00:00:00Z",
+            "mode": "clipboard"
+        }"#;
+        let data: ConversationData = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(data.question, "What is AI?");
+        assert_eq!(data.mode, "clipboard");
+    }
 }

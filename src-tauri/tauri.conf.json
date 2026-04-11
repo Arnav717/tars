@@ -21,7 +21,7 @@
                 "alwaysOnTop": true,
                 "fullscreen": false,
                 "resizable": false,
-                "skipTaskbar": true
+                "skipTaskbar": false
             }
         ],
         "security": {
