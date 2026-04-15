@@ -1,5 +1,8 @@
 use tauri::Manager;
 use serde::{Deserialize, Serialize};
+use pdf_extract::extract_text;
+use walkdir::WalkDir;
+use std::fs;
 use std::env;
 use xcap::Monitor;
 use base64::Engine;
@@ -51,6 +54,68 @@ struct Candidate {
 #[derive(Serialize, Deserialize)]
 struct Content {
     parts: Vec<MessagePart>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct FileChunk {
+    path: String,
+    content: String,
+}
+
+#[tauri::command]
+async fn index_local_documents() -> Result<Vec<FileChunk>, String> {
+    let mut chunks = Vec::new();
+    let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
+    if home.is_empty() { return Err("No HOME dir found".to_string()); }
+    
+    let target_dirs = vec![
+        format!("{}/Documents", home),
+        format!("{}/Downloads", home),
+    ];
+    
+    for dir in target_dirs {
+        if !std::path::Path::new(&dir).exists() {
+            continue;
+        }
+        
+        for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
+        if entry.file_type().is_file() {
+            let path = entry.path();
+            if let Some(ext) = path.extension() {
+                let ext_str = ext.to_string_lossy().to_lowercase();
+                if ext_str == "pdf" {
+                    println!("📄 Parsing PDF (this may take a moment): {:?}", path.file_name().unwrap_or_default());
+                    if let Ok(content) = extract_text(path) {
+                        for (i, paragraph) in content.split("\n\n").enumerate() {
+                            let text = paragraph.trim();
+                            if text.len() > 20 {
+                                chunks.push(FileChunk {
+                                    path: format!("{}:{}", path.display(), i),
+                                    content: text.to_string(),
+                                });
+                            }
+                        }
+                    }
+                } else if ext_str == "txt" || ext_str == "md" || ext_str == "csv" || ext_str == "json" {
+                    if let Ok(content) = fs::read_to_string(path) {
+                        for (i, paragraph) in content.split("\n\n").enumerate() {
+                            let text = paragraph.trim();
+                            if text.len() > 20 {
+                                chunks.push(FileChunk {
+                                    path: format!("{}:{}", path.display(), i),
+                                    content: text.to_string(),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        }
+    }
+    
+    println!("📚 Indexed {} chunks from ~/Documents and ~/Downloads", chunks.len());
+    Ok(chunks)
 }
 
 #[tauri::command]
@@ -280,7 +345,8 @@ pub fn run() {
             take_screenshot,
             screenshot_and_show_window,
             send_screenshot_to_gemini,
-            store_conversation
+            store_conversation,
+            index_local_documents
         ])
         .setup(|_app| {
             Ok(())

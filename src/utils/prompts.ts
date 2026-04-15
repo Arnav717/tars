@@ -13,6 +13,11 @@ export const textPrompt = (context: string) => {
   <tool>open_app</tool><args>app_name</args>
   For example, to open Spotify: <tool>open_app</tool><args>spotify</args>
   For example, to open Firefox: <tool>open_app</tool><args>firefox</args>
+  
+  You also have the ability to search the user's local documents (~/Documents and ~/Downloads) using a semantic RAG pipeline.
+  If the user asks you to find a document, search their files, or asks a question about their personal files, you MUST respond EXACTLY with:
+  <tool>search_files</tool><args>search_query</args>
+  For example: <tool>search_files</tool><args>machine learning notes</args>
 
   always try to respond using the context or relevant to the context if theres any.
   here is some context that might be useful: ${context}

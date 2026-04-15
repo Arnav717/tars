@@ -9,6 +9,7 @@ import ResponseSection from "./components/ResponseSection";
 import { fetchClipboard } from "./utils/clipboard";
 import StoreToDB from "./components/StoreToDB";
 import ModelSelector from "./components/ModelSelector";
+import { initializeRAG, performSemanticSearch } from "./utils/ragAgent";
 
 function App() {
     const [inputValue, setInputValue] = useState("");
@@ -28,9 +29,7 @@ function App() {
 
     // Background initialization of RAG
     useEffect(() => {
-        invoke("init_rag")
-            .then(res => console.log("[RAG]", res))
-            .catch(err => console.log("[RAG WARNING]", err));
+        initializeRAG();
     }, []);
 
     const lastClearedRef = useRef("");
@@ -205,18 +204,20 @@ function App() {
                 const match = response.match(/<args>(.*?)<\/args>/);
                 if (match && match[1]) {
                     const query = match[1].trim();
+                    response = `Searching files for "${query}"...`;
                     try {
-                        const docs: string[] = await invoke("search_documents", { query });
+                        const docs = await performSemanticSearch(query, 10);
                         if (docs.length > 0) {
-                            // Secretly relay the local RAG context back to Gemini for summarization
-                            const contextForLLM = `DATABASE CONTEXT (Top 3 Semantic Matches):\n${docs.join("\n---\n")}`;
+                            // Relay the local RAG context back to Gemini for summarization
+                            const mappedDocs = docs.map((doc: any) => `File: ${doc.path.split(':')[0]}\nContent: ${doc.content}`).join("\n---\n");
+                            const contextForLLM = `DATABASE CONTEXT (Top 10 Semantic Matches):\n${mappedDocs}`;
                             response = await sendMessageWithContext(
                                 contextForLLM,
-                                "I have provided the local file context above. Please summarize or answer my original request naturally based only on those documents.",
+                                "I have provided the local file context above. If the context does not explicitly contain the answer to my original query, acknowledge that it was not found in my files instead of guessing. Query: " + query,
                                 screenshotData
                             );
                         } else {
-                            response = "I searched your documents but couldn't find anything matching that query.";
+                            response = "I searched your documents but couldn't find anything highly relevant to that query.";
                         }
                     } catch (err: any) {
                         response = `Sorry, I encountered an error searching your documents: ${err}`;
