@@ -1,0 +1,27 @@
+flowchart TD
+    subgraph External["External Entities"]
+        User(["👤 User"])
+        GeminiAPI[("☁️ Gemini API")]
+        DynamoDB[("💾 DynamoDB")]
+        Clipboard[("📋 System Clipboard")]
+        Screen[("🖥️ Display/Monitor")]
+    end
+
+    P1["1.0 Capture Context\n(Clipboard / Screenshot)"]
+    P2["2.0 Build Prompt\n(context + user input)"]
+    P3["3.0 Call Gemini API\n(reqwest POST)"]
+    P4["4.0 Render Response\n(MarkdownRenderer)"]
+    P5["5.0 Store Conversation\n(optional)"]
+
+    User -->|"Hotkey\nCtrl+Shift+U/Y"| P1
+    Clipboard -->|"clipboard text"| P1
+    Screen -->|"screenshot bytes"| P1
+    P1 -->|"context data"| P2
+    User -->|"typed query"| P2
+    P2 -->|"Message[] payload"| P3
+    P3 -->|"HTTP POST"| GeminiAPI
+    GeminiAPI -->|"JSON response"| P3
+    P3 -->|"response text"| P4
+    P4 -->|"rendered markdown"| User
+    P4 -->|"ConversationData"| P5
+    P5 -.->|"put_item"| DynamoDB

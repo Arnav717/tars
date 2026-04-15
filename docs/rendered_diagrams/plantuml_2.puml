@@ -1,0 +1,73 @@
+@startuml TARS_Component_Diagram
+skinparam monochrome false
+skinparam shadowing false
+skinparam component {
+    BackgroundColor #1e1e2e
+    BorderColor #89b4fa
+    FontColor #cdd6f4
+}
+skinparam package {
+    BackgroundColor #181825
+    BorderColor #6c7086
+    FontColor #cdd6f4
+}
+
+package "Frontend (src/)" {
+    [App.tsx] as app
+    note right of app
+        Main component
+        State: input, response,
+        context, mode, model
+    end note
+
+    package "Components" {
+        [ModelSelector.tsx] as model
+        [ResponseSection.tsx] as response
+        [StoreToDB.tsx] as store
+    }
+
+    package "Utils" {
+        [clipboard.tsx] as clip
+        [conversationManager.ts] as conv
+        [prompts.ts] as prompts
+        [userIdentifier.ts] as uid
+        [MarkdownRenderer.tsx] as md
+    }
+
+    package "Actions" {
+        [llm.tsx] as llm
+    }
+}
+
+package "Backend (src-tauri/)" {
+    [lib.rs] as backend
+    note right of backend
+        6 Tauri commands:
+        send_message_to_gemini
+        take_screenshot
+        toggle_window
+        screenshot_and_show_window
+        send_screenshot_to_gemini
+        store_conversation
+    end note
+}
+
+cloud "External Services" {
+    [Gemini API] as gemini
+    [AWS DynamoDB] as dynamo
+}
+
+app --> model
+app --> response
+app --> store
+app --> llm
+llm --> clip
+llm --> conv
+llm --> prompts
+response --> md
+store ..> uid
+
+llm --> backend : Tauri IPC invoke()
+backend --> gemini : reqwest HTTP
+backend --> dynamo : aws-sdk put_item
+@enduml

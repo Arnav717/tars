@@ -1,0 +1,54 @@
+@startuml TARS_Sequence_Diagram
+skinparam monochrome false
+skinparam shadowing false
+skinparam sequence {
+    ArrowColor #89b4fa
+    LifeLineBorderColor #6c7086
+    ParticipantBackgroundColor #1e1e2e
+    ParticipantBorderColor #89b4fa
+    ParticipantFontColor #cdd6f4
+}
+
+actor User as user
+participant "Frontend\n(React/TS)" as frontend
+participant "Tauri IPC\nBridge" as ipc
+participant "Backend\n(Rust)" as backend
+participant "Gemini API" as gemini
+
+user -> frontend : Press Ctrl+Shift+U
+activate frontend
+
+frontend -> ipc : invoke("toggle_window")
+ipc -> backend : show_window()
+activate backend
+backend --> ipc : Window shown
+deactivate backend
+
+frontend -> ipc : fetchClipboard()
+ipc --> frontend : clipboard_text
+
+user -> frontend : Type query + Enter
+frontend -> frontend : setQuestion(input)
+frontend -> frontend : setIsLoading(true)
+
+frontend -> ipc : invoke("send_message_to_gemini", messages)
+activate ipc
+ipc -> backend : send_message_to_gemini(messages)
+activate backend
+
+backend -> gemini : POST /v1beta/models/gemini-2.5-flash:generateContent
+activate gemini
+gemini --> backend : JSON GeminiResponse
+deactivate gemini
+
+backend -> backend : Parse candidates[0].content.parts[0].text
+backend --> ipc : Result<String>
+deactivate backend
+ipc --> frontend : response: String
+deactivate ipc
+
+frontend -> frontend : setResponse(response)
+frontend -> frontend : setIsLoading(false)
+frontend -> user : Render MarkdownRenderer(response)
+deactivate frontend
+@enduml

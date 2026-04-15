@@ -1,0 +1,31 @@
+erDiagram
+    TARS_CONVERSATIONS {
+        string id PK "UUID v4"
+        string question "User's query text"
+        string response "AI response text"
+        string context "Clipboard/screenshot context"
+        string timestamp "ISO 8601 datetime"
+        string mode "clipboard | screenshot"
+    }
+
+    LOCAL_USER {
+        string user_id PK "user_* format"
+    }
+
+    LOCAL_MESSAGES {
+        string role "user | model"
+    }
+
+    MESSAGE_PART {
+        string text "nullable - text content"
+    }
+
+    INLINE_DATA {
+        string mime_type "image/png"
+        string data "base64 encoded"
+    }
+
+    LOCAL_USER ||--o{ LOCAL_MESSAGES : "has many"
+    LOCAL_MESSAGES ||--|{ MESSAGE_PART : "contains"
+    MESSAGE_PART ||--o| INLINE_DATA : "optionally has"
+    LOCAL_USER ||--o{ TARS_CONVERSATIONS : "cloud backup"

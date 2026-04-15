@@ -1,8 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { register, unregister } from "@tauri-apps/plugin-global-shortcut";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import { sendMessage } from "./actions/llm";
-import { FileText, X } from "lucide-react";
+import { FileText, X, Settings2, Search, Share, Zap, WifiOff } from "lucide-react";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import ResponseSection from "./components/ResponseSection";
 import { fetchClipboard } from "./utils/clipboard";
@@ -24,6 +25,14 @@ function App() {
     );
     const [forceRefresh, setForceRefresh] = useState(0);
     const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash");
+
+    // Background initialization of RAG
+    useEffect(() => {
+        invoke("init_rag")
+            .then(res => console.log("[RAG]", res))
+            .catch(err => console.log("[RAG WARNING]", err));
+    }, []);
+
     const lastClearedRef = useRef("");
     const lastAcceptedRef = useRef("");
     const chatContentRef = useRef<HTMLDivElement>(null);
@@ -181,6 +190,39 @@ function App() {
                 userMessage,
                 screenshotData
             );
+
+            // Agentic Tool Execution Intercept
+            if (response.includes("<tool>open_app</tool>")) {
+                const match = response.match(/<args>(.*?)<\/args>/);
+                if (match && match[1]) {
+                    const appName = match[1].trim().toLowerCase();
+                    const url = appName === "spotify" ? "spotify:" : `https://${appName}.com`;
+
+                    openUrl(url).catch((err: any) => console.error("Agentic tool error", err));
+                    response = `Opening ${appName}...`;
+                }
+            } else if (response.includes("<tool>search_files</tool>")) {
+                const match = response.match(/<args>(.*?)<\/args>/);
+                if (match && match[1]) {
+                    const query = match[1].trim();
+                    try {
+                        const docs: string[] = await invoke("search_documents", { query });
+                        if (docs.length > 0) {
+                            // Secretly relay the local RAG context back to Gemini for summarization
+                            const contextForLLM = `DATABASE CONTEXT (Top 3 Semantic Matches):\n${docs.join("\n---\n")}`;
+                            response = await sendMessageWithContext(
+                                contextForLLM,
+                                "I have provided the local file context above. Please summarize or answer my original request naturally based only on those documents.",
+                                screenshotData
+                            );
+                        } else {
+                            response = "I searched your documents but couldn't find anything matching that query.";
+                        }
+                    } catch (err: any) {
+                        response = `Sorry, I encountered an error searching your documents: ${err}`;
+                    }
+                }
+            }
         } catch (error) {
             console.error("Failed to submit:", error);
         } finally {
@@ -231,9 +273,24 @@ function App() {
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            setQuestion(inputValue);
 
             const lowerInput = inputValue.trim().toLowerCase();
+
+            // App opening command
+            if (lowerInput.startsWith("open ")) {
+                setQuestion(inputValue);
+                const appName = lowerInput.replace("open ", "").trim();
+                const url = appName === "spotify" ? "spotify:" : `https://${appName}.com`;
+
+                openUrl(url).catch((err: any) => console.error("Failed to open app", err));
+
+                setResponse(`Opening ${appName}...`);
+                setInputValue("");
+                return;
+            }
+
+            setQuestion(inputValue);
+
             const needsScreenshot =
                 lowerInput.startsWith("analyze:") ||
                 lowerInput.startsWith("screenshot:") ||
@@ -350,6 +407,9 @@ function App() {
                     justifyContent: "space-between",
                     border: "1px solid rgba(255, 255, 255, 0.1)",
                     boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+                    position: "relative",
+                    zIndex: 20,
+                    overflow: "visible",
                 }}
             >
                 {/* Left side - TARS branding */}
@@ -433,6 +493,27 @@ function App() {
                             ? "Ctrl+⇧+Y for image context"
                             : "Ctrl+⇧+U for clipboard context"}
                     </div>
+                    {/* Placeholder for Offline Mode */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#6b7280", opacity: 0.5 }} className="cursor-not-allowed" title="Offline mode coming soon (Issue #12)">
+                        <WifiOff size={12} />
+                    </div>
+                    {/* Placeholder for Quick Actions */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#6b7280", opacity: 0.5 }} className="cursor-not-allowed" title="Prompt Actions coming soon (Issue #19)">
+                        <Zap size={12} />
+                    </div>
+                    {/* Placeholder for Basic Search */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#6b7280", opacity: 0.5 }} className="cursor-not-allowed" title="Search coming soon (Issue #23)">
+                        <Search size={12} />
+                    </div>
+                    {/* Placeholder for Export / Share */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#6b7280", opacity: 0.5 }} className="cursor-not-allowed" title="Export feature coming soon (Issue #25)">
+                        <Share size={12} />
+                    </div>
+                    {/* Placeholder for Settings (Hotkeys, Cost Tracking, Local LLM) */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#6b7280", opacity: 0.5 }} className="cursor-not-allowed" title="Settings coming soon (Issues #15, #17, #21)">
+                        <Settings2 size={12} />
+                    </div>
+
                     <div
                         style={{
                             width: "1px",
@@ -704,6 +785,7 @@ function App() {
                         onKeyDown={handleKeyPress}
                         placeholder="What's on your mind?"
                         autoFocus
+                        aria-label="Ask TARS"
                         ref={inputRef}
                         style={{
                             width: "100%",

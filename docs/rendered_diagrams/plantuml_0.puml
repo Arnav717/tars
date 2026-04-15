@@ -1,0 +1,58 @@
+@startuml TARS_Class_Diagram
+skinparam classAttributeIconSize 0
+skinparam monochrome false
+skinparam shadowing false
+skinparam class {
+    BackgroundColor #1e1e2e
+    BorderColor #89b4fa
+    FontColor #cdd6f4
+    AttributeFontColor #a6adc8
+    ArrowColor #89b4fa
+}
+
+class GeminiRequest {
+    + contents: Vec<Message>
+}
+
+class GeminiResponse {
+    + candidates: Vec<Candidate>
+}
+
+class Message {
+    + role: String
+    + parts: Vec<MessagePart>
+}
+
+class Candidate {
+    + content: Content
+}
+
+class Content {
+    + parts: Vec<MessagePart>
+}
+
+class MessagePart {
+    + text: Option<String>
+    + inline_data: Option<InlineData>
+}
+
+class InlineData {
+    + mime_type: String
+    + data: String
+}
+
+class ConversationData {
+    + question: String
+    + response: String
+    + context: String
+    + timestamp: String
+    + mode: String
+}
+
+GeminiRequest *-- "1..*" Message : contains
+GeminiResponse *-- "1..*" Candidate : candidates
+Candidate *-- "1" Content : content
+Content *-- "1..*" MessagePart : parts
+Message *-- "1..*" MessagePart : parts
+MessagePart *-- "0..1" InlineData : inline_data
+@enduml

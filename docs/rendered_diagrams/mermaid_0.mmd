@@ -1,0 +1,11 @@
+flowchart LR
+    User(["👤 User"])
+    TARS["🤖 TARS Application"]
+    Gemini[("☁️ Gemini API")]
+    DynamoDB[("💾 DynamoDB")]
+
+    User -->|"Query + Context\n(clipboard / screenshot)"| TARS
+    TARS -->|"AI Response\n(markdown)"| User
+    TARS -->|"API Request\n(JSON + base64 image)"| Gemini
+    Gemini -->|"API Response\n(GeminiResponse JSON)"| TARS
+    TARS -.->|"Store Conversation\n(opt-in)"| DynamoDB

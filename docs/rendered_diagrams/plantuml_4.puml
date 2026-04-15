@@ -1,0 +1,74 @@
+@startuml TARS_Activity_Diagram
+skinparam monochrome false
+skinparam shadowing false
+skinparam activity {
+    BackgroundColor #1e1e2e
+    BorderColor #89b4fa
+    FontColor #cdd6f4
+}
+skinparam diamond {
+    BackgroundColor #1e1e2e
+    BorderColor #f38ba8
+    FontColor #cdd6f4
+}
+
+start
+
+:User presses global hotkey;
+
+if (Which hotkey?) then (Ctrl+Shift+U)
+    :Read clipboard content;
+    :Set mode = "clipboard";
+else (Ctrl+Shift+Y)
+    :Capture screenshot via xcap;
+    :Read clipboard content;
+    :Set mode = "screenshot";
+endif
+
+:Show translucent window;
+:Display context card;
+
+:User types query;
+:User presses Enter;
+
+:Set isLoading = true;
+:Show "Thinking..." animation;
+
+if (Screenshot data available?) then (yes)
+    :Encode screenshot as base64 PNG;
+    :invoke("send_screenshot_to_gemini");
+else (no)
+    :Build Message[] with context;
+    :invoke("send_message_to_gemini");
+endif
+
+:Rust backend sends POST to Gemini API;
+:Parse GeminiResponse JSON;
+
+if (API success?) then (yes)
+    :Extract candidates[0].content.parts[0].text;
+    :Return Result<String>;
+else (no)
+    :Return Err(error_message);
+endif
+
+:Set isLoading = false;
+:Render response via MarkdownRenderer;
+
+if (Record toggle ON?) then (yes)
+    :invoke("store_conversation");
+    :Write to DynamoDB;
+endif
+
+:User reads response;
+
+if (User action?) then (Copy)
+    :Copy to clipboard via Ctrl+C;
+else (Dismiss)
+    :Hide window via Esc;
+else (Follow-up)
+    :User types new query;
+endif
+
+stop
+@enduml

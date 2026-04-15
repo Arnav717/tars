@@ -1,5 +1,71 @@
 import Markdown from "react-markdown";
 import { Highlight, themes } from "prism-react-renderer";
+import { useState } from "react";
+import { Copy, Check } from "lucide-react";
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
+
+function CodeBlockWrapper({ code, language, className, style, tokens, getLineProps, getTokenProps }: any) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        try {
+            await writeText(code);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy code", err);
+        }
+    };
+
+    return (
+        <div className="markdown-code-block" style={{ backgroundColor: "#1d1d1d", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", overflow: "hidden", margin: "20px 0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 16px", backgroundColor: "rgba(0, 0, 0, 0.3)", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                <span style={{ fontSize: "12px", color: "#a1a1aa", fontFamily: "monospace", textTransform: "uppercase" }}>{language}</span>
+                <button
+                    onClick={handleCopy}
+                    style={{
+                        background: "transparent",
+                        border: "none",
+                        color: copied ? "#4ade80" : "#a1a1aa",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        fontSize: "12px",
+                        padding: "4px 8px",
+                        width: "auto",
+                        borderRadius: "4px",
+                        transition: "all 0.2s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)"}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                >
+                    {copied ? <Check size={14} /> : <Copy size={14} />}
+                    {copied ? "Copied!" : "Copy"}
+                </button>
+            </div>
+            <pre
+                className={`${className} markdown-pre`}
+                style={{ ...style, backgroundColor: "transparent", margin: 0, padding: "16px", paddingTop: "12px" }}
+            >
+                {tokens.map((line: any, i: number) => (
+                    <div
+                        key={i}
+                        {...getLineProps({ line })}
+                        className="markdown-code-line"
+                    >
+                        <span className="markdown-line-number">{i + 1}</span>
+                        <span className="markdown-code-content">
+                            {line.map((token: any, key: number) => (
+                                <span key={key} {...getTokenProps({ token })} />
+                            ))}
+                        </span>
+                    </div>
+                ))}
+            </pre>
+        </div>
+    );
+}
 
 interface MarkdownRendererProps {
     content: string;
@@ -87,41 +153,13 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
                         }
 
                         return (
-                            <div className="markdown-code-block">
-                                <Highlight
-                                    theme={themes.oneDark}
-                                    code={code}
-                                    language={language}
-                                >
-                                    {({
-                                        className,
-                                        style,
-                                        tokens,
-                                        getLineProps,
-                                        getTokenProps,
-                                    }) => (
-                                        <pre
-                                            className={`${className} markdown-pre`}
-                                            style={{ ...style, backgroundColor: "#1d1d1d" }}
-                                        >
-                                            {tokens.map((line, i) => (
-                                                <div
-                                                    key={i}
-                                                    {...getLineProps({ line })}
-                                                    className="markdown-code-line"
-                                                >
-                                                    <span className="markdown-line-number">{i + 1}</span>
-                                                    <span className="markdown-code-content">
-                                                        {line.map((token, key) => (
-                                                            <span key={key} {...getTokenProps({ token })} />
-                                                        ))}
-                                                    </span>
-                                                </div>
-                                            ))}
-                                        </pre>
-                                    )}
-                                </Highlight>
-                            </div>
+                            <Highlight
+                                theme={themes.oneDark}
+                                code={code}
+                                language={language}
+                            >
+                                {(props) => <CodeBlockWrapper code={code} language={language} {...props} />}
+                            </Highlight>
                         );
                     },
                     code: ({ children }) => (

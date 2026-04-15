@@ -55,6 +55,8 @@ struct Content {
 
 #[tauri::command]
 async fn send_message_to_gemini(messages: Vec<Message>) -> Result<String, String> {
+    // TODO (#9): Implement Server-Sent Events (SSE) streaming for Gemini response stream
+    // TODO (#10): Make sure to use cross-compile actions in GH for multi-OS builds (macOS/Win/Linux)
     let api_key = env::var("GOOGLE_API_KEY")
         .map_err(|_| "GOOGLE_API_KEY environment variable not set".to_string())?;
     
@@ -263,6 +265,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--minimized"])))
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(window) = tauri::Manager::get_webview_window(app, "main") {
                 let _ = window.unminimize();

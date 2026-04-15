@@ -3,11 +3,8 @@ import { useState } from "react";
 
 const MODELS = [
     { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash", free: true },
-    { id: "grok-4-fast", name: "Grok 4 Fast", free: true },
-    { id: "grok-3-mini", name: "Grok 3 Mini", free: true },
-    { id: "qwen-3-32b", name: "Qwen 3 32B", free: false },
-    { id: "qwen-3-vl-8b", name: "Qwen 3 VL 8B", free: false },
-    { id: "qwen-3-4b", name: "Qwen 3 4B", free: true },
+    { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro", free: false },
+    { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro", free: false },
 ];
 
 interface ModelSelectorProps {
